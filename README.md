@@ -14,6 +14,76 @@ Main orchestrator for the GTFS disruption detection multi-model pipeline. Integr
 | SpatialRF | RandomForest with spatial lag features |
 | LightGBM | Gradient boosting |
 
+## Project Structure
+
+```
+code/
+├── gtfs_disruption/
+│   ├── app.py                    # Main Streamlit dashboard
+│   ├── pipeline.py               # ML pipeline orchestrator
+│   ├── config.yaml               # Configuration
+│   ├── ingestion.py              # GTFS-RT/static data ingestion
+│   ├── features/
+│   │   ├── __init__.py           # DisruptionFeatureBuilder
+│   │   ├── classifier.py         # DisruptionClassifier
+│   │   ├── analyzer.py           # DisruptionAnalyzer
+│   │   ├── enrichment.py         # GTFSEnricher
+│   │   ├── early_warning.py      # EarlyWarningBuilder
+│   │   ├── alert_nlp.py          # AlertNLPEnricher
+│   │   ├── network_graph.py      # StopSequenceGraph
+│   │   └── comprehensive_features.py
+│   ├── modeling/
+│   │   ├── __init__.py           # chronological_split, TemporalAwareBalancer
+│   │   ├── leakage.py            # Leakage detection
+│   │   ├── adaptive_split.py     # AdaptiveSplitter
+│   │   ├── gnn_models.py         # ST-GAT, STARN-GAT
+│   │   ├── interpretability.py   # SHAP explainer
+│   │   ├── hyperparameter_optimization.py
+│   │   └── feature_selection.py
+│   ├── evaluation/
+│   │   ├── __init__.py           # compute_metrics, generate_classification_report
+│   │   ├── spatial_maps.py       # Folium/Deck.gl maps
+│   │   ├── interpretability.py   # SHAPExplainer, FeatureImportanceAnalyzer
+│   │   └── enhanced_plots.py
+│   ├── nlp/
+│   │   └── bert_classifier.py    # BERT alert classification
+│   ├── api/
+│   │   └── __init__.py           # FastAPI inference server
+│   ├── utils/
+│   │   ├── __init__.py           # load_config, setup_logging, MemoryMonitor
+│   │   ├── monitoring.py         # DriftDetector, PerformanceTracker
+│   │   └── experiment_tracking.py
+│   ├── integration/
+│   │   └── weather.py            # Weather data integration
+│   ├── alerting/
+│   │   └── escalation.py         # Alert escalation logic
+│   ├── quality/
+│   │   └── gtfs_validator.py     # GTFS data quality checks
+│   └── tests/
+│       ├── test_features.py
+│       ├── test_modeling.py
+│       └── test_adaptive_split.py
+├── alerts_eda/                   # Exploratory analysis of service alerts
+├── nlp_eda/                      # NLP exploratory analysis
+├── transit-dashboard/            # Alternative dashboard implementation
+├── feed_data/                    # Sample GTFS-RT parquet data
+├── output/                       # Generated outputs and models
+└── visualizations/               # Publication-quality figures
+```
+
+## Data Sources
+
+- **Live GTFS-RT feed**: http://gtfs.ovapi.nl/nl/ (vehicle positions and alerts)
+- **Static GTFS data**: Integrated from Netherlands GTFS feed
+
+## Dependencies
+
+Core: streamlit, plotly, pandas, numpy, pyvis, networkx, scikit-learn, xgboost, lightgbm, shap
+
+Optional: torch, transformers, spacy, langdetect, geopandas, folium, fastapi, uvicorn
+
+
+
 ## Key Classes
 
 ### DisruptionPipeline
@@ -92,3 +162,8 @@ pipeline.generate_visualizations(sim, classified_df)
 - ...
 - `models/<model_name>.pkl`
 - `output/<run_name>.json`
+
+## License
+
+This project is part of an academic thesis on GTFS disruption detection.
+
